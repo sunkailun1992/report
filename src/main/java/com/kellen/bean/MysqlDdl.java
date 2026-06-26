@@ -54,6 +54,6 @@ public class MysqlDdl implements IDdl {
      */
     @Override
     public List<String> getSqlFiles() {
-        return List.of(""); // 默认初始化 ddl_history 和 undo_log，业务DDL后续按需追加。
+        return List.of(); // 公共基础表改为启动前手动执行 utils 脚本；当前模块暂无业务DDL。
     }
 }
