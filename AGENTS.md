@@ -8,7 +8,7 @@
 - 项目类型：报告服务后端
 - 技术栈：Java 17、Spring Boot、Gradle、MyBatis-Plus、RabbitMQ、Nacos、Dubbo、`com:utils`、`com:rpc-api`
 - 同级依赖：`../rpc-api` 提供跨服务 RPC 接口和 DTO 契约；`../utils` 提供公共响应、认证上下文、租户、多数据源和基础工具；`../gateway` 负责路由；`../admin-web` 负责后台页面
-- 当前状态：从现有 Java 微服务工程骨架迁移而来，只保留基础工程、配置入口、CI、脚本和 AI 编码规范；不携带任何历史服务业务代码。
+- 当前状态：从现有 Java 微服务工程骨架迁移而来，只保留基础工程、配置入口、公共基础设施 DDL、CI、脚本和 AI 编码规范；不携带任何历史服务业务代码。
 - 核心风险：报告归属、租户隔离、数据权限、报告文件访问、导出脱敏、异步生成幂等、MQ 和外部存储失败处理
 
 ## 修改前阅读顺序
@@ -54,7 +54,7 @@
 
 - 子智能体可以并行分析 Controller、Service、Mapper、DDL、MQ 配置、admin-web 调用、gateway 路由和报告文件链路。
 - 不允许多个 worker 同时修改同一核心 Service、Mapper XML、权限规则或 DDL 脚本。
-- 新增报告业务 DDL 前必须确认目标库的 `ddl_history` 和 Seata AT `undo_log` 是否已具备；缺失时先回到公共基础设施方案处理，不在本仓库复制历史脚本。
+- 默认 DDL 只初始化 `ddl_history` 和 Seata AT `undo_log`；新增报告业务 DDL 时追加独立 SQL 文件，不修改已执行的公共基础设施脚本。
 - 最终报告归属、访问权限、数据权限、文件权限和测试结论必须由主智能体统一判断。
 
 ## 验证命令

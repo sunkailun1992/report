@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 /**
  * MyBatis-Plus自动维护DDL。
  * <p>
- * report 当前不携带业务表，后续新增报告业务表时再追加独立SQL脚本。
+ * report 当前不携带业务表，仅默认维护公共数据库基础表；后续新增报告业务表时再追加独立SQL脚本。
  *
  * @author sunkailun
  * @className MysqlDdl
@@ -54,6 +54,6 @@ public class MysqlDdl implements IDdl {
      */
     @Override
     public List<String> getSqlFiles() {
-        return List.of(); // 当前模块没有业务DDL，避免执行从模板服务复制来的历史脚本。
+        return List.of("db/common-infra-schema.sql"); // 默认初始化 ddl_history 和 undo_log，业务DDL后续按需追加。
     }
 }

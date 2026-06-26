@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 修改APP_NAME为云效上的应用名
-APP_NAME=report-1.0.0
+APP_NAME=report-1.0.1
 
 
 PROG_NAME=$0

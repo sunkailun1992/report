@@ -100,14 +100,20 @@ MyBatis-Plus DDL 入口在：
 src/main/java/com/kellen/bean/MysqlDdl.java
 ```
 
-当前报告模块暂无业务表初始化脚本，`getSqlFiles()` 返回空列表。
+当前报告模块默认初始化公共基础设施表：
+
+```text
+src/main/resources/db/common-infra-schema.sql
+```
+
+该脚本只维护 MyBatis-Plus DDL 记录表 `ddl_history` 和 Seata AT 事务补偿表 `undo_log`，不包含报告业务表。
 
 后续新增报告业务表时：
 
 - SQL 放在 `src/main/resources/db/*.sql`。
 - 先检查目标数据库 `ddl_history`。
 - 已执行或无法确认是否执行过的 SQL 文件不得回改。
-- 新增变更使用新的 SQL 文件，并追加到 `MysqlDdl#getSqlFiles()`。
+- 新增变更使用新的 SQL 文件，并追加到 `MysqlDdl#getSqlFiles()`，不要删除 `db/common-infra-schema.sql`。
 - 表字段、Entity、BO、Query、VO、ServiceQuery、ServiceResults 和测试同步补齐。
 
 ## 接口文档
