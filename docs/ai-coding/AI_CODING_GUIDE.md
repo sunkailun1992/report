@@ -37,6 +37,7 @@
 ## DDL 变更规则
 
 - 修改 `src/main/resources/db/*.sql` 前，先检查 `MysqlDdl#getSqlFiles()` 和数据库 `ddl_history` 的执行记录。
+- 全新或空业务库首次启动前，必须先在目标业务库手动执行 `../utils/src/main/resources/db/common-infra-schema.sql`；Seata AT 会在 `DataSource` 初始化时先检查 `undo_log`，不能依赖 MyBatis-Plus DDL 首次启动自动创建该表。
 - 必须连接当前目标数据库查询 `ddl_history`；只有明确确认脚本未执行，才允许修改该脚本。
 - 已发布、已执行、可能已执行、无法确认执行状态的脚本禁止改原文件；原始建表和基础数据脚本一旦执行，后续变更必须新增独立 SQL。
 - 如果 `ddl_history` 已记录某个脚本，或无法连接数据库确认执行状态，后续表结构、默认数据、树状权限资源等变更必须新增独立 SQL 脚本，并按顺序追加到 `MysqlDdl#getSqlFiles()`。

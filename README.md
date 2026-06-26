@@ -106,7 +106,7 @@ src/main/java/com/kellen/bean/MysqlDdl.java
 src/main/resources/db/common-infra-schema.sql
 ```
 
-该脚本只维护 MyBatis-Plus DDL 记录表 `ddl_history` 和 Seata AT 事务补偿表 `undo_log`，不包含报告业务表。
+该脚本只维护 MyBatis-Plus DDL 记录表 `ddl_history` 和 Seata AT 事务补偿表 `undo_log`，不包含报告业务表。全新或空业务库首次启动前，必须先在目标业务库手动执行同级 `../utils/src/main/resources/db/common-infra-schema.sql`；Seata AT 会在 `DataSource` 初始化时先检查 `undo_log`，不能依赖应用首次启动自动创建该表。
 
 后续新增报告业务表时：
 

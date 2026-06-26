@@ -189,6 +189,7 @@ src/main/resources/db/*.sql
 
 规则：
 
+- 全新或空业务库首次启动前，必须先在目标业务库手动执行 `../utils/src/main/resources/db/common-infra-schema.sql`。Seata AT 的 `DataSourceProxy` 会早于 MyBatis-Plus DDL 检查 `undo_log`，所以不能指望应用首次启动自动建出公共基础表。
 - 修改 `src/main/resources/db/*.sql` 前，必须先查看 `MysqlDdl#getSqlFiles()` 确认脚本列表和执行顺序。
 - 修改任意已存在 SQL 脚本前，必须连接当前目标数据库查询 `ddl_history`，确认该脚本是否已经执行。
 - 如果 `ddl_history` 已存在该脚本记录，禁止继续修改该 SQL 文件；表结构、默认数据、权限资源树等后续变更必须新增独立 SQL 脚本。

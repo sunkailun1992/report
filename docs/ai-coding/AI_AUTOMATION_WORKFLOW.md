@@ -78,6 +78,7 @@
 - [ ] 逻辑删除字段处理正确。
 - [ ] 乐观锁 version 处理正确。
 - [ ] DDL 脚本按 ddl_history 规则新增或修改。
+- [ ] 全新或空业务库首次启动前，已在目标业务库手动执行 `../utils/src/main/resources/db/common-infra-schema.sql`。
 
 ## 权限
 - [ ] Controller 权限码正确。

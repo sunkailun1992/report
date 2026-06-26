@@ -54,7 +54,7 @@
 
 - 子智能体可以并行分析 Controller、Service、Mapper、DDL、MQ 配置、admin-web 调用、gateway 路由和报告文件链路。
 - 不允许多个 worker 同时修改同一核心 Service、Mapper XML、权限规则或 DDL 脚本。
-- 默认 DDL 只初始化 `ddl_history` 和 Seata AT `undo_log`；新增报告业务 DDL 时追加独立 SQL 文件，不修改已执行的公共基础设施脚本。
+- 报告服务全新或空业务库首次启动前，必须先在目标业务库手动执行 `../utils/src/main/resources/db/common-infra-schema.sql`；Seata AT 会在 `DataSource` 初始化时先检查 `undo_log`，不能依赖应用首次启动自动创建该表。新增报告业务 DDL 时追加独立 SQL 文件，不修改已执行的公共基础设施脚本。
 - 最终报告归属、访问权限、数据权限、文件权限和测试结论必须由主智能体统一判断。
 
 ## 验证命令
