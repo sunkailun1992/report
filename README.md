@@ -6,6 +6,10 @@
 
 个人公共库固定为 `com:utils:1.5.1`、`com:rpc-api:1.0.7`。个人与美联共用同一阿里云私有 Maven 地址：个人沿用 `com` group，公司保留 `com.kellen` group；artifact 名仍为 `utils` / `rpc-api`，Java package 不随 Maven 坐标改变。公共库须先完成 Maven Local 验证并独立发布私库，消费者再按精确坐标拉取；已有同版制品不得覆盖。
 
+## 启动入口
+
+主应用类为 `com.kellen.ReportApplication`，IDE 可直接运行该类。Gradle `bootRun` 与可执行 JAR 的入口由 `springBoot.mainClass` 统一指定；仍使用 `./gradlew bootRun` 或 `java -jar build/libs/report.jar`，工作目录保持为当前服务仓库根目录。
+
 ## 技术基线
 
 - Java 17
