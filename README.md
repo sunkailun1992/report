@@ -212,3 +212,11 @@ bash scripts/check-secrets.sh
 ```bash
 ./gradlew publishToMavenLocal
 ```
+
+## 通用安全与架构同步
+
+公共安全依赖精确固定为 `com.kellen:utils:1.4.9`。Actuator 除 health 外要求运行时配置 `security.actuator.token` 并在 `actuatorReq` 请求头提交令牌；缺失或错误令牌一律拒绝。令牌由独立环境配置提供，不写入仓库。隔离的消费者回归测试只装配真实 MVC/Actuator 与安全链，不连接 Nacos、数据库、MQ 或远程服务；它不替代目标环境验收。
+
+版本由 `1.0.3` 升到 `1.0.4`，保持空业务骨架；未引入医疗报告、患者、问卷、CGA、医院投递与业务 DDL。
+
+公共 RPC 契约固定为 `com:rpc-api:1.0.7`，包含供执行层使用的强制验签入口；本服务不调用旧的可选签名方法来授予 Agent 身份。JWT 签发/验签共用运行时 `security.jwt.secret`（Base64 编码且解码至少 32 字节），无内置默认密钥；测试使用独立合成密钥。
