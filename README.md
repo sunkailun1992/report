@@ -57,7 +57,17 @@ custom:
 
 ## Nacos 配置
 
-本地 `application.yml` 只保存连接 Nacos 需要的启动入口和 `spring.config.import` 远程配置列表。当前 report 加载：
+### 普通开发启动
+
+默认 profile 为 `dev`。Spring Boot 会自动读取服务根目录下的 `config/application-dev.properties`：IDE Run/Debug 的 working directory 必须设为当前服务仓库根目录；`./gradlew bootRun` 使用项目目录；`java -jar build/libs/<service>.jar` 也从服务仓库根目录执行。base `application.yml` 保持原样，不增加私有 import。
+
+该本机私有文件由同级 `utils/ops/github-dev` 的受控环境入口生成，权限保持 `0600`，仅保存 Nacos 引导键，已按精确路径忽略；不要提交地址、用户名或密码，也不要把 shell dotenv 原文直接当 properties。OS 环境变量优先于私有文件，原 launcher 的 env 注入仍然有效。dev 地址依次取 `GITHUB_NACOS_DEV_SERVER_ADDR`、`GITHUB_NACOS_SERVER_ADDR`，namespace 保留 `github-dev`；私有文件不存在且环境未提供地址时，启动必须失败，不再尝试本机 Nacos。
+
+显式 `spring.profiles.active` 可覆盖默认 `APP_ENV=dev`；仅选择 `test` 或 `prod` 时不读取 dev 私有文件，使用各自 profile 的地址与 namespace。控制台入口端口 `18080` 与 SDK 配置/注册服务端口 `8848` 不可混用；SDK 还需能访问 gRPC 端口 `9848`。真实主机与凭据仅保存在本机私有配置。完整约定见 `docs/ai-coding/ENVIRONMENT_CONFIG_SPEC.md`。
+
+### 远程配置列表
+
+base `application.yml` 保留服务入口，dev 私有引导由外置 `config/application-dev.properties` 提供；`application-*.yml` 保存对应 profile 的 Nacos 连接与远程配置列表。当前 report 加载（完整列表以对应 profile 为准）：
 
 ```text
 logging.yml

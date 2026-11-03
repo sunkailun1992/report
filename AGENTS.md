@@ -2,6 +2,14 @@
 
 本文件是 `report` 服务的 AI 编码入口。AI 修改本项目代码前，必须先阅读本文件，再按任务风险阅读 `README.md` 和 `docs/ai-coding` 下的规范。
 
+## Git 分支、完整交付与清理
+
+- 长期保护 `main`、`test`、`preprod`：分别为正式主干、集成测试、发布候选；禁止 force push 和删除。新任务 fetch 后从最新 `origin/main` 的确定 SHA 建独立短分支，续作可复用已核实归属的本功能分支，保留其他会话与无关 dirty。
+- 完整功能包含必要代码、测试、文档、migration、公共契约和依赖。进入 test/preprod 后保留源分支；候选按最新 main 加完整功能及必需跨仓配套验证，不默认把混合 test 整条合 main，也不逐提交拼装常规交付。
+- 完整功能合入 main、远端 refs 和包含关系核实后，清理本次已结束的本地及远端短分支。只进 test/preprod、未合入、用途不明或被其他 worktree 占用的分支不能删；三条长期分支永久排除在短分支清理外。详情见 `docs/ai-coding/BRANCHING_SPEC.md`。
+- Git 分支不自动切换 profile 或触发部署。现有 APP_ENV=dev、github-dev 与服务根 config/application-dev.properties 模式保持；base application.yml 不改写，未来环境映射和部署另行配置与验收。
+- 按风险执行编译、测试、安全专项检查及必要独立验证；Review 是补充，不新增人工代码审批。只按已有用户授权执行提交、推送、合并、tag、制品和部署；纯规范不升业务版本或重复发布 Maven 制品。
+
 ## 项目定位
 
 - 项目名称：`report`

@@ -21,11 +21,12 @@
 
 ## 分支规则
 
-- `personal` 融合 `dev` 时两个分支必须保持同步版本。
-- 禁止不同版本分支直接融合。
-- 修复 bug 时新建 bug 修复分支。
-- bug 修复完成后，需要向上融合到所有后续迭代版本分支。
-- bug 修复分支完成融合后再删除。
+当前流程以 `AGENTS.md` 与 `BRANCHING_SPEC.md` 为准；archive 中 personal/dev 的历史团队流程不作为当前操作指令。
+
+- main/test/preprod 为保护长期分支；新任务 fetch 后从最新 origin/main 建完整功能短分支，保留无关 dirty 和其他会话工作。
+- 功能源分支承载必要代码、测试、文档、migration、公共契约和依赖；跨仓固定版本与 HEAD，先验证公共包和消费者。
+- 只进入 test/preprod 不清理源分支；完整功能和必要配套全部进入 main、远端 refs 与包含关系核实后，删除本次已合的本地及远端短分支。
+- 不删除长期分支、未合功能或其他 worktree 占用的分支；worktree 释放不等于分支已交付。Git 分支不自动切换当前 github-dev 运行配置或表示已部署。
 
 ## 数据库规则
 
@@ -72,6 +73,6 @@
 - 是否已阅读 `PROJECT_CODING_SPEC.md`。
 - 是否已阅读本文件。
 - 是否需要打开 `archive/utils-markdown/ErrorCode.md` 查完整错误码。
-- 是否需要打开 `archive/utils-markdown/Announcement.md` 核对团队流程原文。
+- 是否需要打开 `archive/utils-markdown/Announcement.md` 核对历史团队原文；当前操作仍遵守 AGENTS.md / BRANCHING_SPEC.md。
 - 是否需要打开 `archive/utils-markdown/Specification.md` 核对 Java 通用规范。
 - 是否避免把公共规范重新放回运行时 `src/main/resources`。

@@ -1,12 +1,14 @@
 # AI 编码执行指南
 
+Git 流程以 `AGENTS.md` 与 `BRANCHING_SPEC.md` 为准：最新 main 起完整功能短分支，test 集成、preprod 候选分别验证并保留源分支；完整进入 main 且远端核实后才删除本次已合短分支。main/test/preprod、未合分支与其他 worktree 使用中的分支均保护。Git 阶段不切换当前 dev profile/namespace，不代表环境已部署；纯规范不升业务版本。
+
 ## 使用方式
 
 当用户要求新增或修改业务功能时，AI 应按以下顺序工作：
 
 1. 阅读当前业务模块已有代码。
 2. 阅读 `AI_AUTOMATION_WORKFLOW.md`，先形成需求说明、验收标准和开发手册。
-3. 阅读 `AI_ENGINEERING_GUARDRAILS.md`，确认风险等级、必须测试、安全门禁、Review 门禁和交付说明。
+3. 阅读 `AI_ENGINEERING_GUARDRAILS.md`，确认风险等级、必须测试、安全门禁、Review 补充检查和交付说明。
 4. 阅读 `AI_DIRECTORY_STRUCTURE_GUIDE.md`，确认 Java 微服务目录、测试、资源、文档和跨项目边界。
 5. 阅读 `AI_DESIGN_PATTERN_GUIDE.md`，确认报告服务适用的设计模式和禁止过度抽象规则。
 6. 阅读 `PROJECT_CODING_SPEC.md`。
