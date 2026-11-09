@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * MyBatis-Plus自动维护DDL。
+ * MyBatis-Plus 自动维护 PostgreSQL DDL。
  * <p>
  * report 当前不携带业务表，仅默认维护公共数据库基础表；后续新增报告业务表时再追加独立SQL脚本。
  *
  * @author sunkailun
- * @className MysqlDdl
+ * @className PostgresqlDdl
  */
 @Component
-public class MysqlDdl implements IDdl {
+public class PostgresqlDdl implements IDdl {
 
     /**
      * 当前项目数据源。
@@ -30,7 +30,7 @@ public class MysqlDdl implements IDdl {
      * @return void
      * @author sunkailun
      */
-    public MysqlDdl(DataSource dataSource) {
+    public PostgresqlDdl(DataSource dataSource) {
         this.dataSource = dataSource; // 保存当前应用数据源，交给MyBatis-Plus DDL运行器执行脚本。
     }
 
@@ -54,6 +54,8 @@ public class MysqlDdl implements IDdl {
      */
     @Override
     public List<String> getSqlFiles() {
-        return List.of(); // 公共基础表改为启动前手动执行 utils 脚本；当前模块暂无业务DDL。
+        return List.of(
+                "db/postgresql/common-infra-schema.sql"
+        );
     }
 }
