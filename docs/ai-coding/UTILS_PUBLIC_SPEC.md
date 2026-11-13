@@ -23,9 +23,9 @@
 
 当前流程以 `AGENTS.md` 与 `BRANCHING_SPEC.md` 为准；archive 中 personal/dev 的历史团队流程不作为当前操作指令。
 
-- main/test/preprod 为保护长期分支；新任务 fetch 后从最新 origin/main 建完整功能短分支，保留无关 dirty 和其他会话工作。
+- `main` 是唯一保护长期分支，不再创建 test/preprod；新任务 fetch 后从最新 origin/main 建完整功能短分支，保留无关 dirty 和其他会话工作。
 - 功能源分支承载必要代码、测试、文档、migration、公共契约和依赖；跨仓固定版本与 HEAD，先验证公共包和消费者。
-- 只进入 test/preprod 不清理源分支；完整功能和必要配套全部进入 main、远端 refs 与包含关系核实后，删除本次已合的本地及远端短分支。
+- 未进入 main 的源分支不清理；完整功能和必要配套全部进入 main、远端 refs 与包含关系核实后，删除本次已合的本地及远端短分支。
 - 不删除长期分支、未合功能或其他 worktree 占用的分支；worktree 释放不等于分支已交付。Git 分支不自动切换当前 github-dev 运行配置或表示已部署。
 
 ## 数据库规则
