@@ -33,7 +33,7 @@ version = '1.0.0'
 
 ## 公共包和消费者
 
-- 本仓库个人依赖固定为 `com:utils:1.5.3`、`com:rpc-api:1.0.7`；公司对应坐标是 `com.kellen:utils`、`com.kellen:rpc-api`，共用阿里云私库但不得互相覆盖制品。
+- 本仓库个人依赖固定为 `com:utils:1.6.6`、`com:rpc-api:1.0.9`；公司对应坐标是 `com.kellen:utils`、`com.kellen:rpc-api`，共用阿里云私库但不得互相覆盖制品。
 - 个人 utils 恢复原有 `com` group 是 Maven 坐标迁移，Java package 保持不变；先验证并发布匹配公共制品，再同步消费者编译。回滚时同时回滚依赖坐标与匹配版本，不移动 tag 或覆盖旧制品。
 
 - `utils` 等公共包改动后，先提升公共包版本并发布到 Maven Local 验证。

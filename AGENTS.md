@@ -23,7 +23,7 @@
 
 - 项目名称：`report`
 - 项目类型：报告服务后端
-- 技术栈：Java 17、Spring Boot、Gradle、MyBatis-Plus、RabbitMQ、Nacos、Dubbo、`com:utils`、`com:rpc-api`
+- 技术栈：Java 21、Spring Boot、Gradle、MyBatis-Plus、RabbitMQ、Nacos、Dubbo、`com:utils`、`com:rpc-api`
 - 同级依赖：`../rpc-api` 提供跨服务 RPC 接口和 DTO 契约；`../utils` 提供公共响应、认证上下文、租户、多数据源和基础工具；`../gateway` 负责路由；`../admin-web` 负责后台页面
 - 当前状态：从现有 Java 微服务工程骨架迁移而来，只保留基础工程、配置入口、公共基础设施 DDL、CI、脚本和 AI 编码规范；不携带任何历史服务业务代码。
 - 核心风险：报告归属、租户隔离、数据权限、报告文件访问、导出脱敏、异步生成幂等、MQ 和外部存储失败处理
@@ -51,7 +51,7 @@
 
 ## 项目边界
 
-- 个人公共库固定使用 `com:utils:1.6.2` 与 `com:rpc-api:1.0.7`；公司库保留 `com.kellen:utils` 与 `com.kellen:rpc-api`。双方共用同一阿里云私有 Maven 地址，沿用各自 group 坐标隔离，不改 Java package，也不迁移到另一仓库或 GitHub Packages。
+- 个人公共库固定使用 `com:utils:1.6.6` 与 `com:rpc-api:1.0.9`；公司库保留 `com.kellen:utils` 与 `com.kellen:rpc-api`。双方共用同一阿里云私有 Maven 地址，沿用各自 group 坐标隔离，不改 Java package，也不迁移到另一仓库或 GitHub Packages。
 
 - `report` 当前只定义报告服务工程边界，业务表、Controller、Service、Mapper、RPC 契约和权限码都需要在真实报告需求明确后再补。
 - 新增报告生成、上传、解析、归档、导出、审核、分享、通知或异步任务时，必须优先沿用 `docs/ai-coding/AI_DESIGN_PATTERN_GUIDE.md` 中的 Service Layer、Strategy、Observer、State、Pipeline、Adapter 等项目适用模式。
