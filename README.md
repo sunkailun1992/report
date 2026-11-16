@@ -4,7 +4,7 @@
 
 当前项目从现有 Java 微服务工程骨架迁移而来，只保留基础工程、统一异常处理、DDL 入口、CI、脚本和 AI 编码规范；不包含任何历史服务业务代码，也不包含 `user` 服务中的用户、租户、角色、权限资源等业务类。
 
-个人公共库固定为 `com:utils:1.6.8`、`com:rpc-api:1.0.9`。个人与美联共用同一阿里云私有 Maven 地址：个人沿用 `com` group，公司保留 `com.kellen` group；artifact 名仍为 `utils` / `rpc-api`，Java package 不随 Maven 坐标改变。公共库须先完成 Maven Local 验证并独立发布私库，消费者再按精确坐标拉取；已有同版制品不得覆盖。
+个人公共库固定为 `com:utils:1.7.0`、`com:rpc-api:1.0.9`。个人与美联共用同一阿里云私有 Maven 地址：个人沿用 `com` group，公司保留 `com.kellen` group；artifact 名仍为 `utils` / `rpc-api`，Java package 不随 Maven 坐标改变。公共库须先完成 Maven Local 验证并独立发布私库，消费者再按精确坐标拉取；已有同版制品不得覆盖。
 
 ## 启动入口
 
@@ -104,31 +104,18 @@ utils/src/main/java/com/kellen/config/rabbit/RabbitMqConfig.java
 
 当前 `report` 没有业务队列。后续业务服务只声明自己的 exchange、queue、binding 和 listener；不得在业务服务复制公共 MQ 配置。
 
-## DDL
+## 表结构
 
-MyBatis-Plus DDL 入口在：
-
-```text
-src/main/java/com/kellen/bean/PostgresqlDdl.java
-```
-
-当前报告模块暂无业务表，`PostgresqlDdl#getSqlFiles()` 仅注册 `db/postgresql/common-infra-schema.sql`，不创建历史或占位业务表。
-
-全新或空业务库首次启动前，必须先在目标业务库手动执行同级公共基础设施脚本：
+当前报告模块暂无业务表，库里只有 Seata AT 的 `undo_log`，不创建历史或占位业务表。表结构只由本服务的 Flyway 迁移维护：
 
 ```text
-../utils/src/main/resources/db/postgresql/common-infra-schema.sql
+src/main/resources/db/migration/V1__baseline.sql         Seata AT 回滚日志表 undo_log，只在空库执行
+src/main/resources/db/migration/V2__drop_ddl_history.sql 删除旧 DDL 方式的执行记录表
 ```
 
-该脚本只维护 MyBatis-Plus DDL 记录表 `ddl_history` 和 Seata AT 事务补偿表 `undo_log`，不包含报告业务表。Seata AT 会在 `DataSource` 初始化时先检查 `undo_log`，不能依赖应用首次启动自动创建该表。
+表结构只由本服务 `src/main/resources/db/migration` 的 Flyway 迁移管理；已提交的迁移文件不修改，改结构只新增 `V<下一个>__<说明>.sql`；新库保持空库，由服务首次启动时的 Flyway 建表，不手工执行任何公共脚本。已有的库由 `baseline-on-migrate` 把版本 1 登记为基线、不执行 V1，再执行 V2 起的迁移。Seata AT 的 `undo_log` 在 `V1__baseline.sql` 里；数据源块固定 `spring.datasource.dynamic.seata: true`，不设总开关；建池时 Seata AT 代理就检查该表，utils 在创建任何 Bean 之前先执行 Flyway 迁移，新空库首次启动即建出该表。
 
-后续新增报告业务表时：
-
-- SQL 放在 `src/main/resources/db/postgresql/*.sql`。
-- 先检查目标数据库 `ddl_history`。
-- 已执行或无法确认是否执行过的 SQL 文件不得回改。
-- 新增变更使用新的 SQL 文件，并追加到 `PostgresqlDdl#getSqlFiles()`。
-- 表字段、Entity、BO、Query、VO、ServiceQuery、ServiceResults 和测试同步补齐。
+后续新增报告业务表时新增 `V<下一个>__<说明>.sql`，实体继承 utils 的 `TenantEntityBase`（无租户的表继承 `EntityBase`），列按 `docs/ai-coding/PROJECT_CODING_SPEC.md` 的公共治理字段补齐；表字段、Entity、BO、Query、VO、ServiceQuery、ServiceResults 和测试同步补齐。
 
 ## 接口文档
 
@@ -227,7 +214,7 @@ bash scripts/check-secrets.sh
 
 ## 通用安全与架构同步
 
-公共安全依赖精确固定为 `com:utils:1.6.8`。Actuator 除 health 外要求运行时配置 `security.actuator.token` 并在 `actuatorReq` 请求头提交令牌；缺失或错误令牌一律拒绝。令牌由独立环境配置提供，不写入仓库。隔离的消费者回归测试只装配真实 MVC/Actuator 与安全链，不连接 Nacos、数据库、MQ 或远程服务；它不替代目标环境验收。
+公共安全依赖精确固定为 `com:utils:1.7.0`。Actuator 除 health 外要求运行时配置 `security.actuator.token` 并在 `actuatorReq` 请求头提交令牌；缺失或错误令牌一律拒绝。令牌由独立环境配置提供，不写入仓库。隔离的消费者回归测试只装配真实 MVC/Actuator 与安全链，不连接 Nacos、数据库、MQ 或远程服务；它不替代目标环境验收。
 
 版本由 `1.0.3` 升到 `1.0.4`，保持空业务骨架；未引入医疗报告、患者、问卷、CGA、医院投递与业务 DDL。
 

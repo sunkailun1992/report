@@ -51,7 +51,7 @@
 
 ## 项目边界
 
-- 个人公共库固定使用 `com:utils:1.6.8` 与 `com:rpc-api:1.0.9`；公司库保留 `com.kellen:utils` 与 `com.kellen:rpc-api`。双方共用同一阿里云私有 Maven 地址，沿用各自 group 坐标隔离，不改 Java package，也不迁移到另一仓库或 GitHub Packages。
+- 个人公共库固定使用 `com:utils:1.7.0` 与 `com:rpc-api:1.0.9`；公司库保留 `com.kellen:utils` 与 `com.kellen:rpc-api`。双方共用同一阿里云私有 Maven 地址，沿用各自 group 坐标隔离，不改 Java package，也不迁移到另一仓库或 GitHub Packages。
 
 - `report` 当前只定义报告服务工程边界，业务表、Controller、Service、Mapper、RPC 契约和权限码都需要在真实报告需求明确后再补。
 - 新增报告生成、上传、解析、归档、导出、审核、分享、通知或异步任务时，必须优先沿用 `docs/ai-coding/AI_DESIGN_PATTERN_GUIDE.md` 中的 Service Layer、Strategy、Observer、State、Pipeline、Adapter 等项目适用模式。
@@ -74,7 +74,7 @@
 
 - 子智能体可以并行分析 Controller、Service、Mapper、DDL、MQ 配置、admin-web 调用、gateway 路由和报告文件链路。
 - 不允许多个 worker 同时修改同一核心 Service、Mapper XML、权限规则或 DDL 脚本。
-- 报告服务全新或空业务库首次启动前，必须先在目标业务库手动执行 `../utils/src/main/resources/db/postgresql/common-infra-schema.sql`；Seata AT 会在 `DataSource` 初始化时先检查 `undo_log`，不能依赖应用首次启动自动创建该表。新增报告业务 DDL 时追加独立 SQL 文件，不修改已执行的公共基础设施脚本。
+- 表结构只由本服务 `src/main/resources/db/migration` 的 Flyway 迁移管理；已提交的迁移文件不修改，改结构只新增 `V<下一个>__<说明>.sql`；新库保持空库，由服务首次启动时的 Flyway 建表，不手工执行任何公共脚本。Seata AT 的 `undo_log` 在 `V1__baseline.sql` 里；数据源块固定 `spring.datasource.dynamic.seata: true`，不设总开关；建池时 Seata AT 代理就检查该表，utils 在创建任何 Bean 之前先执行 Flyway 迁移，新空库首次启动即建出该表。
 - 最终报告归属、访问权限、数据权限、文件权限和测试结论必须由主智能体统一判断。
 
 ## 验证命令
