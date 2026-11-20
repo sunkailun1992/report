@@ -4,7 +4,7 @@
 
 当前项目从现有 Java 微服务工程骨架迁移而来，只保留基础工程、统一异常处理、DDL 入口、CI、脚本和 AI 编码规范；不包含任何历史服务业务代码，也不包含 `user` 服务中的用户、租户、角色、权限资源等业务类。
 
-个人公共库固定为 `com:utils:1.7.0`、`com:rpc-api:1.0.9`。个人与美联共用同一阿里云私有 Maven 地址：个人沿用 `com` group，公司保留 `com.kellen` group；artifact 名仍为 `utils` / `rpc-api`，Java package 不随 Maven 坐标改变。公共库须先完成 Maven Local 验证并独立发布私库，消费者再按精确坐标拉取；已有同版制品不得覆盖。
+个人公共库固定为 `com:utils:1.7.2`、`com:rpc-api:1.0.9`。个人与美联共用同一阿里云私有 Maven 地址：个人沿用 `com` group，公司保留 `com.kellen` group；artifact 名仍为 `utils` / `rpc-api`，Java package 不随 Maven 坐标改变。公共库须先完成 Maven Local 验证并独立发布私库，消费者再按精确坐标拉取；已有同版制品不得覆盖。
 
 ## 启动入口
 
@@ -31,13 +31,13 @@
 - 报告文件、附件、预览图和外部存储访问控制。
 - 报告归属、租户隔离、部门/负责人数据权限和字段脱敏。
 - 异步生成、重试、补偿、进度记录和任务幂等。
-- 按真实需求接入 RabbitMQ、Dubbo RPC 或第三方通知能力。
+- 按真实需求接入 RocketMQ、Dubbo RPC 或第三方通知能力。
 
 公共工具、认证上下文、多租户、统一返回、统一异常、数据权限、MyBatis-Plus 公共配置等能力不在本服务重复实现，统一复用同级 `utils` 项目。
 
 ## 基础设施地址
 
-除 `application.yml` 中连接 Nacos 自身的启动入口外，PostgreSQL、Redis、RabbitMQ、Seata、Elasticsearch、Kibana、Zipkin 等基础设施地址统一放在 Nacos `reuse-configuration.yaml`。
+除 `application.yml` 中连接 Nacos 自身的启动入口外，PostgreSQL、Redis、RocketMQ、Seata、Elasticsearch、Kibana、Zipkin 等基础设施地址统一放在 Nacos `reuse-configuration.yaml`。
 
 蒲公英、Tailscale、节点小宝等组网地址变化时，优先只修改公共配置中的基础设施变量，例如：
 
@@ -47,7 +47,6 @@ custom:
   infra-nacos-addr: ${custom.infra-host}:8848
   infra-postgresql-addr: ${custom.infra-host}:<POSTGRESQL_PORT>
   infra-redis-addr: ${custom.infra-host}:6379
-  infra-rabbitmq-addr: ${custom.infra-host}:5672
   infra-seata-addr: ${custom.infra-host}:8091
   infra-elasticsearch-addr: ${custom.infra-host}:9200
   infra-elasticsearch-uri: http://${custom.infra-host}:9200
@@ -86,23 +85,9 @@ dubbo.yaml
 local-canary.yaml
 ```
 
-## RabbitMQ
+## RocketMQ
 
-RabbitMQ 公共增强配置统一放在 `utils`：
-
-```text
-utils/src/main/java/com/kellen/config/rabbit/RabbitMqConfig.java
-```
-
-公共配置负责：
-
-- 复用 Spring Boot 标准 `spring.rabbitmq.*` 自动配置。
-- 注册 RabbitMQ JSON 消息转换器。
-- 发送 MQ 消息时透传当前动态数据源、`traceId` 和租户上下文。
-- 消费 MQ 消息时恢复动态数据源、`traceId` 和租户上下文。
-- 消费完成后清理线程上下文，避免消费线程复用串数据。
-
-当前 `report` 没有业务队列。后续业务服务只声明自己的 exchange、queue、binding 和 listener；不得在业务服务复制公共 MQ 配置。
+本服务当前不收发消息。需要时用 `utils` 的消息模块（rocketmq-spring；配置、命名、泳道与禁止事项见 utils 的 `docs/ai-coding/MQ_SPEC.md`）：在 Nacos `report-spring.yaml` 配 `rocketmq.*` 与 `fleet.mq.*`，发送用 `MqTemplate`，消费用 `@RocketMQMessageListener`；不在本服务复制公共 MQ 配置。
 
 ## 表结构
 
@@ -214,7 +199,7 @@ bash scripts/check-secrets.sh
 
 ## 通用安全与架构同步
 
-公共安全依赖精确固定为 `com:utils:1.7.0`。Actuator 除 health 外要求运行时配置 `security.actuator.token` 并在 `actuatorReq` 请求头提交令牌；缺失或错误令牌一律拒绝。令牌由独立环境配置提供，不写入仓库。隔离的消费者回归测试只装配真实 MVC/Actuator 与安全链，不连接 Nacos、数据库、MQ 或远程服务；它不替代目标环境验收。
+公共安全依赖精确固定为 `com:utils:1.7.2`。Actuator 除 health 外要求运行时配置 `security.actuator.token` 并在 `actuatorReq` 请求头提交令牌；缺失或错误令牌一律拒绝。令牌由独立环境配置提供，不写入仓库。隔离的消费者回归测试只装配真实 MVC/Actuator 与安全链，不连接 Nacos、数据库、MQ 或远程服务；它不替代目标环境验收。
 
 版本由 `1.0.3` 升到 `1.0.4`，保持空业务骨架；未引入医疗报告、患者、问卷、CGA、医院投递与业务 DDL。
 
