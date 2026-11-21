@@ -1,6 +1,6 @@
 package com.kellen.report.security;
 
-import com.kellen.report.support.FakeIssuer;
+import com.kellen.security.oauth2.test.FakeIssuer;
 import com.kellen.security.SecurityUser;
 import com.kellen.security.oauth2.FleetResourceServerAutoConfiguration;
 import com.kellen.security.oauth2.SecurityContextResult;
